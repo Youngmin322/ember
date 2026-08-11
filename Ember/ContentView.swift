@@ -12,7 +12,7 @@ struct ContentView: View {
         TabView {
             Tab("홈", systemImage: "house") {
                 NavigationStack {
-                    Text("홈")
+                    HomeView()
                         .navigationTitle("Ember")
                 }
             }
