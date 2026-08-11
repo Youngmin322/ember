@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1D97B5B8302AE9D300C4F5E8 /* EmberCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1D97B5B7302AE9D300C4F5E8 /* EmberCore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		1D97B5A4302AB12500C4F5E8 /* Ember.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ember.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D97B5B8302AE9D300C4F5E8 /* EmberCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Ember;
 			packageProductDependencies = (
+				1D97B5B7302AE9D300C4F5E8 /* EmberCore */,
 			);
 			productName = Ember;
 			productReference = 1D97B5A4302AB12500C4F5E8 /* Ember.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 1D97B59B302AB12500C4F5E8;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				1D97B5B6302AE9D300C4F5E8 /* XCLocalSwiftPackageReference "../EmberCore" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1D97B5A5302AB12500C4F5E8 /* Products */;
 			projectDirPath = "";
@@ -332,6 +341,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		1D97B5B6302AE9D300C4F5E8 /* XCLocalSwiftPackageReference "../EmberCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../EmberCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1D97B5B7302AE9D300C4F5E8 /* EmberCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = EmberCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1D97B59C302AB12500C4F5E8 /* Project object */;
 }
