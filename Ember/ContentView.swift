@@ -8,15 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var isQuickRecordPresented = false
+    
     var body: some View {
         TabView {
             Tab("홈", systemImage: "house") {
                 NavigationStack {
                     HomeView(
                         rediscoveredFlame: .sample,
-                        onQuickRecord: {},
+                        onQuickRecord: {
+                            isQuickRecordPresented = true
+                        },
                         onDetailRecord: {}
                     )
+                    .navigationDestination(isPresented: $isQuickRecordPresented) {
+                        QuickRecordView()
+                    }
                 }
             }
             
