@@ -11,6 +11,21 @@ struct HomeView: View {
     let rediscoveredFlame: RediscoveredFlameSummary
 
     var body: some View {
+        VStack {
+            Text("Ember")
+                .font(
+                    .system(
+                        .largeTitle,
+                        design: .rounded,
+                        weight: .bold
+                    )
+                    .width(.condensed)
+                )
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, Layout.horizontalPadding)
+        .padding(.top)
+        
         ScrollView {
             VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
                 RediscoveredFlameCard(flame: rediscoveredFlame)
@@ -21,7 +36,6 @@ struct HomeView: View {
         }
         .scrollIndicators(.hidden)
         .background(Color.appBackground.ignoresSafeArea())
-        .navigationTitle("Ember")
     }
 }
 
@@ -45,7 +59,7 @@ private struct RediscoveredFlameCard: View {
                 .foregroundStyle(Color.accentColor)
 
             Text("“\(flame.message)”")
-                .font(.subheadline.weight(.medium))
+                .font(.emberBodyEmphasis)
                 .foregroundStyle(Color.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -74,7 +88,7 @@ private struct RediscoveredFlameCard: View {
 
             Text("\(flame.revisitCount)")
         }
-        .font(.caption)
+        .font(.emberCaption)
         .foregroundStyle(Color.textSecondary)
     }
 }
@@ -99,7 +113,7 @@ struct RediscoveredFlameSummary {
 
 extension RediscoveredFlameSummary {
     static let sample = RediscoveredFlameSummary(
-        message: "나도 꾸준히 만드는 사람이 되고 싶다.",
+        message: "Swift 기본기 연습하기",
         elapsedDays: 84,
         revisitCount: 3
     )

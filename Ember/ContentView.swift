@@ -13,7 +13,6 @@ struct ContentView: View {
             Tab("홈", systemImage: "house") {
                 NavigationStack {
                     HomeView(rediscoveredFlame: .sample)
-                        .navigationTitle("Ember")
                 }
             }
             
