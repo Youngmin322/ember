@@ -37,8 +37,10 @@ struct HomeView: View {
                                 .frame(width: 38, height: 38)
                             
                             Text("빠른 기록")
+                                .font(.emberSectionTitle)
                                 
                             Text("떠오른 마음을\n한 문장으로")
+                                .font(.emberBody)
                         }
                         .padding(16)
                         .frame(
@@ -64,8 +66,10 @@ struct HomeView: View {
                                 .frame(width: 38, height: 38)
                             
                             Text("상세 기록")
+                                .font(.emberSectionTitle)
                                 
-                            Text("상황과 생각까지 천천히 자세히")
+                            Text("상황과 생각까지\n천천히 자세히")
+                                .font(.emberBody)
                         }
                         .padding(16)
                         .frame(
