@@ -9,20 +9,24 @@ struct HomeView: View {
     let recordStore: RecordStore
     @State private var isQuickRecordPresented = false
     @State private var isDetailRecordPresented = false
-
+    
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                header
-                todayCard
-                rhythmCard
-                memoryCard
+        VStack(alignment: .leading, spacing: 18) {
+            header
+                .padding(.horizontal, EmberLayout.screenHorizontalPadding)
+                .padding(.top, 10)
+            
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    todayCard
+                    rhythmCard
+                    memoryCard
+                }
+                .padding(.horizontal, EmberLayout.screenHorizontalPadding)
+                .padding(.bottom, 30)
             }
-            .padding(.horizontal, EmberLayout.screenHorizontalPadding)
-            .padding(.top, 10)
-            .padding(.bottom, 30)
+            .scrollIndicators(.hidden)
         }
-        .scrollIndicators(.hidden)
         .background(Color.emberBackground)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $isQuickRecordPresented) {
@@ -41,7 +45,7 @@ struct HomeView: View {
             }
         }
     }
-
+    
     private var header: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("8월 19일 화요일")
@@ -52,15 +56,15 @@ struct HomeView: View {
                 .foregroundStyle(Color.emberTextPrimary)
         }
     }
-
+    
     private var todayCard: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(hasTodayRecord ? "오늘의 불꽃" : "오늘 떠오른 마음")
+                    Text("오늘 떠오른 마음")
                         .font(.emberControl)
                         .foregroundStyle(Color.emberAccentText)
-                    Text(hasTodayRecord ? latestRecordTitle : "지금 가장 마음에 남는 것은 무엇인가요?")
+                    Text("지금 가장 마음에 남는 것은 무엇인가요?")
                         .font(.emberBodyEmphasis)
                         .foregroundStyle(Color.emberTextPrimary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -68,9 +72,9 @@ struct HomeView: View {
                 Spacer()
                 EmberJar(size: .hero)
             }
-
+            
             Button { isQuickRecordPresented = true } label: {
-                Text(hasTodayRecord ? "오늘 기록 다시 보기" : "오늘의 기록 시작하기")
+                Text(hasTodayRecord ? "새 기록 추가하기" : "오늘의 기록 시작하기")
             }
             .buttonStyle(.emberPrimary(size: .compact))
             .padding(.top, hasTodayRecord ? 14 : 24)
@@ -78,7 +82,7 @@ struct HomeView: View {
         .padding(20)
         .emberCardStyle(fill: .emberSurfaceHighlight, border: .emberBorderSubtle, cornerRadius: EmberRadius.card, hasShadow: true)
     }
-
+    
     private var rhythmCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
@@ -110,7 +114,7 @@ struct HomeView: View {
         .padding(16)
         .emberCardStyle(fill: .emberSurfaceDefault, border: .emberBorderSubtle, cornerRadius: EmberRadius.large)
     }
-
+    
     private var memoryCard: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 6) {
@@ -124,19 +128,15 @@ struct HomeView: View {
         .padding(18)
         .emberCardStyle(fill: .emberSurfaceSubtle, border: .emberBorderSubtle, cornerRadius: EmberRadius.large)
     }
-
+    
     private var hasTodayRecord: Bool {
         recordStore.hasRecord(on: .now, calendar: calendar)
     }
-
-    private var latestRecordTitle: String {
-        recordStore.latestRecord?.title ?? ""
-    }
-
+    
     private func isToday(_ weekdayIndex: Int) -> Bool {
         weekdayIndex == mondayBasedWeekdayIndex(for: .now)
     }
-
+    
     private func hasRecord(onWeekdayIndex weekdayIndex: Int) -> Bool {
         guard let week = calendar.dateInterval(of: .weekOfYear, for: .now),
               let date = calendar.date(byAdding: .day, value: weekdayIndex, to: week.start)
@@ -145,11 +145,11 @@ struct HomeView: View {
         }
         return recordStore.hasRecord(on: date, calendar: calendar)
     }
-
+    
     private var calendar: Calendar {
         Calendar(identifier: .iso8601)
     }
-
+    
     private func mondayBasedWeekdayIndex(for date: Date) -> Int {
         let weekday = calendar.component(.weekday, from: date)
         return weekday == 1 ? 6 : weekday - 2
