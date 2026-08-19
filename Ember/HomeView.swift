@@ -2,205 +2,139 @@
 //  HomeView.swift
 //  Ember
 //
-//  Created by Youngmin Cho on 8/11/26.
-//
 
 import SwiftUI
 
 struct HomeView: View {
-    let rediscoveredFlame: RediscoveredFlameSummary
-    let onQuickRecord: () -> Void
-    let onDetailRecord: () -> Void
-    
+    @State private var isQuickRecordPresented = false
+    @State private var isDetailRecordPresented = false
+    @State private var hasRecord = false
+    @State private var latestRecordTitle = ""
+
     var body: some View {
-        Title
-        
         ScrollView {
-            VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
-                RediscoveredFlameCard(flame: rediscoveredFlame)
-                
-                Text("새로운 불꽃 담기")
-                    .font(.emberSectionTitle)
-                
-                LazyVGrid(
-                    columns: [
-                        GridItem(.flexible(), spacing: EmberSpacing.medium),
-                        GridItem(.flexible())
-                    ],
-                    spacing: EmberSpacing.medium
-                ) {
-                    Button(action: onQuickRecord) {
-                        VStack(alignment: .leading, spacing: EmberSpacing.xSmall) {
-                            Image(.quickRecordIllustration)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 38, height: 38)
-                            
-                            Text("빠른 기록")
-                                .font(.emberSectionTitle)
-                                
-                            Text("떠오른 마음을\n한 문장으로")
-                                .font(.emberBody)
-                        }
-                        .padding(EmberSpacing.medium)
-                        .frame(
-                            maxWidth: .infinity,
-                            minHeight: 170,
-                            alignment: .topLeading
-                        )
-                        .background {
-                            RoundedRectangle(
-                                cornerRadius: EmberRadius.large,
-                                style: .continuous
-                            )
-                            .fill(Color.emberSurfaceHighlight)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button(action: onDetailRecord) {
-                        VStack(alignment: .leading, spacing: EmberSpacing.xSmall) {
-                            Image(.detailRecordIllustration)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 38, height: 38)
-                            
-                            Text("상세 기록")
-                                .font(.emberSectionTitle)
-                                
-                            Text("상황과 생각까지\n천천히 자세히")
-                                .font(.emberBody)
-                        }
-                        .padding(EmberSpacing.medium)
-                        .frame(
-                            maxWidth: .infinity,
-                            minHeight: 170,
-                            alignment: .topLeading
-                        )
-                        .background {
-                            RoundedRectangle(
-                                cornerRadius: EmberRadius.large,
-                                style: .continuous
-                            )
-                            .fill(Color.emberSurfaceSubtle)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
+            VStack(alignment: .leading, spacing: 18) {
+                header
+                todayCard
+                rhythmCard
+                memoryCard
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, Layout.horizontalPadding)
-            .padding(.top, Layout.topPadding)
+            .padding(.horizontal, EmberLayout.screenHorizontalPadding)
+            .padding(.top, 10)
+            .padding(.bottom, 30)
         }
         .scrollIndicators(.hidden)
-        .background(Color.emberBackground.ignoresSafeArea())
-    }
-    
-    private var Title: some View {
-        VStack {
-            Text("Ember")
-                .font(
-                    .system(
-                        .largeTitle,
-                        design: .rounded,
-                        weight: .bold
-                    )
-                    .width(.condensed)
-                )
+        .background(Color.emberBackground)
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $isQuickRecordPresented) {
+            QuickRecordView { title in
+                latestRecordTitle = title
+                hasRecord = true
+            } onOpenDetail: {
+                isDetailRecordPresented = true
+            }
+            .presentationDetents([.height(444)])
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(28)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, Layout.horizontalPadding)
-        .padding(.top)
+        .navigationDestination(isPresented: $isDetailRecordPresented) {
+            DetailedRecordView { title in
+                latestRecordTitle = title
+                hasRecord = true
+            }
+        }
     }
-}
 
-private extension HomeView {
-    enum Layout {
-        static let horizontalPadding = EmberLayout.screenHorizontalPadding
-        static let topPadding = EmberSpacing.xLarge
-        static let sectionSpacing = EmberSpacing.xLarge
-    }
-}
-
-
-// MARK: - Rediscovered Flame Card
-
-private struct RediscoveredFlameCard: View {
-    let flame: RediscoveredFlameSummary
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: Layout.contentSpacing) {
-            Text("오늘 다시 만난 불꽃")
-                .font(.emberLabel)
-                .foregroundStyle(Color.emberAccentText)
-            
-            Text("“\(flame.message)”")
-                .font(.emberBodyEmphasis)
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("8월 19일 화요일")
+                .font(.emberMetadata)
+                .foregroundStyle(Color.emberTextSecondary)
+            Text("오늘의 기록")
+                .font(.emberScreenTitle)
                 .foregroundStyle(Color.emberTextPrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            metadata
         }
-        .padding(.horizontal, Layout.horizontalPadding)
-        .padding(.vertical, Layout.verticalPadding)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .emberCardStyle(
-            fill: .emberSurfaceSubtle,
-            border: .emberBorderSubtle,
-            cornerRadius: Layout.cornerRadius,
-            hasShadow: true
-        )
-        .accessibilityElement(children: .combine)
     }
-    
-    private var metadata: some View {
-        HStack(spacing: Layout.metadataSpacing) {
-            Text("\(flame.elapsedDays)일 전")
-            
-            Text("·")
-            
-            Image(systemName: "arrow.counterclockwise")
-            
-            Text("\(flame.revisitCount)")
+
+    private var todayCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(hasRecord ? "오늘의 불꽃" : "오늘 떠오른 마음")
+                        .font(.emberControl)
+                        .foregroundStyle(Color.emberAccentText)
+                    Text(hasRecord ? latestRecordTitle : "지금 가장 마음에 남는 것은 무엇인가요?")
+                        .font(.emberBodyEmphasis)
+                        .foregroundStyle(Color.emberTextPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer()
+                EmberJar(size: .hero)
+            }
+            if hasRecord {
+                Label("업무 집중 모드에 연결됨", systemImage: "link")
+                    .font(.emberMetadata)
+                    .foregroundStyle(Color.emberAccentText)
+                    .padding(.horizontal, 12)
+                    .frame(height: 28)
+                    .background(Color.emberSurfaceFocus, in: Capsule())
+                    .padding(.top, 8)
+            }
+            Button { isQuickRecordPresented = true } label: {
+                Text(hasRecord ? "오늘 기록 다시 보기" : "오늘의 기록 시작하기")
+            }
+            .buttonStyle(.emberPrimary(size: .compact))
+            .padding(.top, hasRecord ? 14 : 24)
         }
-        .font(.emberCaption)
-        .foregroundStyle(Color.emberTextSecondary)
+        .padding(20)
+        .emberCardStyle(fill: .emberSurfaceHighlight, border: .emberBorderSubtle, cornerRadius: EmberRadius.card, hasShadow: true)
+    }
+
+    private var rhythmCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("이번 주 기록 리듬").font(.emberSectionTitle)
+                Spacer()
+                Text(hasRecord ? "2 / 7" : "0 / 7")
+                    .font(.emberMetadata)
+                    .foregroundStyle(Color.emberTextSecondary)
+            }
+            HStack(spacing: 0) {
+                ForEach(Array(["월", "화", "수", "목", "금", "토", "일"].enumerated()), id: \.offset) { index, day in
+                    VStack(spacing: 7) {
+                        Text(day).font(.emberCaption).foregroundStyle(Color.emberTextSecondary)
+                        ZStack {
+                            Circle().fill(index == 1 ? Color.emberAccent : Color.emberSurfaceSubtle).frame(width: 28, height: 28)
+                            if (hasRecord && index == 1) || index == 0 {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(index == 1 ? Color.white : Color.emberAccent)
+                            } else if index == 1 {
+                                Image(systemName: "plus").font(.system(size: 13, weight: .bold)).foregroundStyle(Color.white)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+        }
+        .padding(16)
+        .emberCardStyle(fill: .emberSurfaceDefault, border: .emberBorderSubtle, cornerRadius: EmberRadius.large)
+    }
+
+    private var memoryCard: some View {
+        HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("다시 만난 불꽃").font(.emberControl).foregroundStyle(Color.emberAccentText)
+                Text("그때의 결심을 오늘 다시 꺼내볼까요?").font(.emberBodyEmphasis).foregroundStyle(Color.emberTextPrimary)
+                Text("84일 전의 기록 보기").font(.emberMetadata).foregroundStyle(Color.emberTextSecondary).padding(.top, 8)
+            }
+            Spacer(minLength: 4)
+            EmberJar(size: .small)
+        }
+        .padding(18)
+        .emberCardStyle(fill: .emberSurfaceSubtle, border: .emberBorderSubtle, cornerRadius: EmberRadius.large)
     }
 }
 
-private extension RediscoveredFlameCard {
-    enum Layout {
-        static let contentSpacing: CGFloat = 15
-        static let horizontalPadding = EmberSpacing.medium
-        static let verticalPadding: CGFloat = 14
-        static let metadataSpacing = EmberSpacing.xxSmall
-        static let cornerRadius = EmberRadius.card
-    }
-}
-
-// MARK: - Presentation Model
-
-struct RediscoveredFlameSummary {
-    let message: String
-    let elapsedDays: Int
-    let revisitCount: Int
-}
-
-extension RediscoveredFlameSummary {
-    static let sample = RediscoveredFlameSummary(
-        message: "Swift 기본기 연습하기",
-        elapsedDays: 84,
-        revisitCount: 3
-    )
-}
-
-
-#Preview {
-    NavigationStack {
-        HomeView(
-            rediscoveredFlame: .sample,
-            onQuickRecord: {},
-            onDetailRecord: {}
-        )
-    }
-}
+#Preview { NavigationStack { HomeView() } }
