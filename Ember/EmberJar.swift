@@ -1,0 +1,108 @@
+//
+//  EmberJar.swift
+//  Ember
+//
+//  Created by Youngmin Cho on 8/19/26.
+//
+
+import SwiftUI
+
+struct EmberJarAnimation: View {
+    enum Size {
+        case hero
+        case small
+
+        var width: CGFloat {
+            switch self {
+            case .hero:
+                120
+            case .small:
+                70
+            }
+        }
+
+        var height: CGFloat {
+            switch self {
+            case .hero:
+                140
+            case .small:
+                82
+            }
+        }
+    }
+
+    let size: Size
+
+    @State private var isFlameAnimating = false
+
+    var body: some View {
+        ZStack {
+            // 유리병 + 코르크마개
+            Image("Jar")
+                .resizable()
+                .scaledToFit()
+                .frame(
+                    width: size.width,
+                    height: size.height
+                )
+
+            // 불꽃 캐릭터
+            Image("EmberFlame")
+                .resizable()
+                .scaledToFit()
+                .frame(
+                    width: size.width * 0.40,
+                    height: size.height * 0.55
+                )
+                .scaleEffect(
+                    x: isFlameAnimating ? 1.02 : 0.98,
+                    y: isFlameAnimating ? 1.04 : 0.96
+                )
+                .rotationEffect(
+                    .degrees(
+                        isFlameAnimating ? 2 : -2
+                    )
+                )
+                .offset(
+                    y: isFlameAnimating ? 8 : 10
+                )
+        }
+        .frame(
+            width: size.width,
+            height: size.height
+        )
+        .onAppear {
+            isFlameAnimating = true
+        }
+        .animation(
+            .easeInOut(duration: 0.9)
+                .repeatForever(autoreverses: true),
+            value: isFlameAnimating
+        )
+    }
+}
+
+#Preview("Ember Jar") {
+    ZStack {
+        Color.emberBackground
+            .ignoresSafeArea()
+
+        VStack(spacing: 40) {
+            EmberJarAnimation(size: .hero)
+            EmberJarAnimation(size: .small)
+        }
+    }
+}
+
+#Preview("Ember Jar") {
+    ZStack {
+        Color.emberBackground
+            .ignoresSafeArea()
+        
+        VStack(spacing: 40) {
+            EmberJarAnimation(size: .hero)
+            
+            EmberJarAnimation(size: .small)
+        }
+    }
+}
