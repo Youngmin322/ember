@@ -24,7 +24,8 @@ final class RecordStore {
 
     init() {
         guard let data = UserDefaults.standard.data(forKey: storageKey),
-              let savedRecords = try? JSONDecoder().decode([EmberRecord].self, from: data) else {
+              let savedRecords = try? JSONDecoder().decode([EmberRecord].self, from: data)
+        else {
             records = []
             return
         }

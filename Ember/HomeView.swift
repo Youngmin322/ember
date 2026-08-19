@@ -68,7 +68,7 @@ struct HomeView: View {
                 Spacer()
                 EmberJar(size: .hero)
             }
-            
+
             Button { isQuickRecordPresented = true } label: {
                 Text(hasTodayRecord ? "오늘 기록 다시 보기" : "오늘의 기록 시작하기")
             }
@@ -139,7 +139,8 @@ struct HomeView: View {
 
     private func hasRecord(onWeekdayIndex weekdayIndex: Int) -> Bool {
         guard let week = calendar.dateInterval(of: .weekOfYear, for: .now),
-              let date = calendar.date(byAdding: .day, value: weekdayIndex, to: week.start) else {
+              let date = calendar.date(byAdding: .day, value: weekdayIndex, to: week.start)
+        else {
             return false
         }
         return recordStore.hasRecord(on: date, calendar: calendar)

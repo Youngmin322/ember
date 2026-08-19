@@ -25,7 +25,7 @@ struct QuickRecordView: View {
             ZStack(alignment: .bottomTrailing) {
                 TextField("지금 떠오른 마음을 적어보세요", text: $content, axis: .vertical)
                     .font(.emberBodyLarge)
-                    .lineLimit(3...4)
+                    .lineLimit(3 ... 4)
                     .padding(16)
                     .frame(maxWidth: .infinity, minHeight: 100, alignment: .topLeading)
                 Text("\(content.count) / 280").font(.emberCaption).foregroundStyle(Color.emberTextSecondary).padding(14)

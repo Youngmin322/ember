@@ -58,7 +58,7 @@ struct DetailedRecordView: View {
                     TextField("오늘 있었던 일과 생각을 천천히 적어보세요", text: $content, axis: .vertical)
                         .font(.emberBodyLarge)
                         .lineSpacing(5)
-                        .lineLimit(6...8)
+                        .lineLimit(6 ... 8)
                         .padding(18)
                         .frame(maxWidth: .infinity, minHeight: 184, alignment: .topLeading)
                     Text("\(content.count) / 1,000")
