@@ -92,7 +92,7 @@ struct HomeView: View {
             HStack {
                 Text("이번 주 기록 리듬").font(.emberSectionTitle)
                 Spacer()
-                Text("\(recordStore.recordCount(inWeekOf: .now)) / 7")
+                Text("\(recordStore.recordCount(inWeekOf: .now, calendar: calendar)) / 7")
                     .font(.emberMetadata)
                     .foregroundStyle(Color.emberTextSecondary)
             }
@@ -134,7 +134,7 @@ struct HomeView: View {
     }
 
     private var hasTodayRecord: Bool {
-        recordStore.hasRecord(on: .now)
+        recordStore.hasRecord(on: .now, calendar: calendar)
     }
 
     private var latestRecordTitle: String {
@@ -142,15 +142,24 @@ struct HomeView: View {
     }
 
     private func isToday(_ weekdayIndex: Int) -> Bool {
-        weekdayIndex == Calendar.current.component(.weekday, from: .now).advanced(by: 5) % 7
+        weekdayIndex == mondayBasedWeekdayIndex(for: .now)
     }
 
     private func hasRecord(onWeekdayIndex weekdayIndex: Int) -> Bool {
-        guard let week = Calendar.current.dateInterval(of: .weekOfYear, for: .now),
-              let date = Calendar.current.date(byAdding: .day, value: weekdayIndex, to: week.start) else {
+        guard let week = calendar.dateInterval(of: .weekOfYear, for: .now),
+              let date = calendar.date(byAdding: .day, value: weekdayIndex, to: week.start) else {
             return false
         }
-        return recordStore.hasRecord(on: date)
+        return recordStore.hasRecord(on: date, calendar: calendar)
+    }
+
+    private var calendar: Calendar {
+        Calendar(identifier: .iso8601)
+    }
+
+    private func mondayBasedWeekdayIndex(for date: Date) -> Int {
+        let weekday = calendar.component(.weekday, from: date)
+        return weekday == 1 ? 6 : weekday - 2
     }
 }
 
