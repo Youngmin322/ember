@@ -68,15 +68,7 @@ struct HomeView: View {
                 Spacer()
                 EmberJar(size: .hero)
             }
-            if hasTodayRecord {
-                Label("업무 집중 모드에 연결됨", systemImage: "link")
-                    .font(.emberMetadata)
-                    .foregroundStyle(Color.emberAccentText)
-                    .padding(.horizontal, 12)
-                    .frame(height: 28)
-                    .background(Color.emberSurfaceFocus, in: Capsule())
-                    .padding(.top, 8)
-            }
+            
             Button { isQuickRecordPresented = true } label: {
                 Text(hasTodayRecord ? "오늘 기록 다시 보기" : "오늘의 기록 시작하기")
             }
