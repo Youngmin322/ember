@@ -6,10 +6,9 @@
 import SwiftUI
 
 struct HomeView: View {
+    let recordStore: RecordStore
     @State private var isQuickRecordPresented = false
     @State private var isDetailRecordPresented = false
-    @State private var hasRecord = false
-    @State private var latestRecordTitle = ""
 
     var body: some View {
         ScrollView {
@@ -27,9 +26,8 @@ struct HomeView: View {
         .background(Color.emberBackground)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $isQuickRecordPresented) {
-            QuickRecordView { title in
-                latestRecordTitle = title
-                hasRecord = true
+            QuickRecordView { title, content in
+                recordStore.add(title: title, content: content)
             } onOpenDetail: {
                 isDetailRecordPresented = true
             }
@@ -38,9 +36,8 @@ struct HomeView: View {
             .presentationCornerRadius(28)
         }
         .navigationDestination(isPresented: $isDetailRecordPresented) {
-            DetailedRecordView { title in
-                latestRecordTitle = title
-                hasRecord = true
+            DetailedRecordView { title, content in
+                recordStore.add(title: title, content: content)
             }
         }
     }
@@ -60,10 +57,10 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(hasRecord ? "오늘의 불꽃" : "오늘 떠오른 마음")
+                    Text(hasTodayRecord ? "오늘의 불꽃" : "오늘 떠오른 마음")
                         .font(.emberControl)
                         .foregroundStyle(Color.emberAccentText)
-                    Text(hasRecord ? latestRecordTitle : "지금 가장 마음에 남는 것은 무엇인가요?")
+                    Text(hasTodayRecord ? latestRecordTitle : "지금 가장 마음에 남는 것은 무엇인가요?")
                         .font(.emberBodyEmphasis)
                         .foregroundStyle(Color.emberTextPrimary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -71,7 +68,7 @@ struct HomeView: View {
                 Spacer()
                 EmberJar(size: .hero)
             }
-            if hasRecord {
+            if hasTodayRecord {
                 Label("업무 집중 모드에 연결됨", systemImage: "link")
                     .font(.emberMetadata)
                     .foregroundStyle(Color.emberAccentText)
@@ -81,10 +78,10 @@ struct HomeView: View {
                     .padding(.top, 8)
             }
             Button { isQuickRecordPresented = true } label: {
-                Text(hasRecord ? "오늘 기록 다시 보기" : "오늘의 기록 시작하기")
+                Text(hasTodayRecord ? "오늘 기록 다시 보기" : "오늘의 기록 시작하기")
             }
             .buttonStyle(.emberPrimary(size: .compact))
-            .padding(.top, hasRecord ? 14 : 24)
+            .padding(.top, hasTodayRecord ? 14 : 24)
         }
         .padding(20)
         .emberCardStyle(fill: .emberSurfaceHighlight, border: .emberBorderSubtle, cornerRadius: EmberRadius.card, hasShadow: true)
@@ -95,7 +92,7 @@ struct HomeView: View {
             HStack {
                 Text("이번 주 기록 리듬").font(.emberSectionTitle)
                 Spacer()
-                Text(hasRecord ? "2 / 7" : "0 / 7")
+                Text("\(recordStore.recordCount(inWeekOf: .now)) / 7")
                     .font(.emberMetadata)
                     .foregroundStyle(Color.emberTextSecondary)
             }
@@ -104,12 +101,12 @@ struct HomeView: View {
                     VStack(spacing: 7) {
                         Text(day).font(.emberCaption).foregroundStyle(Color.emberTextSecondary)
                         ZStack {
-                            Circle().fill(index == 1 ? Color.emberAccent : Color.emberSurfaceSubtle).frame(width: 28, height: 28)
-                            if (hasRecord && index == 1) || index == 0 {
+                            Circle().fill(isToday(index) ? Color.emberAccent : Color.emberSurfaceSubtle).frame(width: 28, height: 28)
+                            if hasRecord(onWeekdayIndex: index) {
                                 Image(systemName: "flame.fill")
                                     .font(.system(size: 13, weight: .semibold))
-                                    .foregroundStyle(index == 1 ? Color.white : Color.emberAccent)
-                            } else if index == 1 {
+                                    .foregroundStyle(isToday(index) ? Color.white : Color.emberAccent)
+                            } else if isToday(index) {
                                 Image(systemName: "plus").font(.system(size: 13, weight: .bold)).foregroundStyle(Color.white)
                             }
                         }
@@ -135,6 +132,26 @@ struct HomeView: View {
         .padding(18)
         .emberCardStyle(fill: .emberSurfaceSubtle, border: .emberBorderSubtle, cornerRadius: EmberRadius.large)
     }
+
+    private var hasTodayRecord: Bool {
+        recordStore.hasRecord(on: .now)
+    }
+
+    private var latestRecordTitle: String {
+        recordStore.latestRecord?.title ?? ""
+    }
+
+    private func isToday(_ weekdayIndex: Int) -> Bool {
+        weekdayIndex == Calendar.current.component(.weekday, from: .now).advanced(by: 5) % 7
+    }
+
+    private func hasRecord(onWeekdayIndex weekdayIndex: Int) -> Bool {
+        guard let week = Calendar.current.dateInterval(of: .weekOfYear, for: .now),
+              let date = Calendar.current.date(byAdding: .day, value: weekdayIndex, to: week.start) else {
+            return false
+        }
+        return recordStore.hasRecord(on: date)
+    }
 }
 
-#Preview { NavigationStack { HomeView() } }
+#Preview { NavigationStack { HomeView(recordStore: RecordStore()) } }

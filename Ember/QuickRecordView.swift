@@ -9,7 +9,7 @@ struct QuickRecordView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var content = ""
-    let onSave: (String) -> Void
+    let onSave: (String, String) -> Void
     let onOpenDetail: () -> Void
 
     var body: some View {
@@ -47,7 +47,7 @@ struct QuickRecordView: View {
             }
             .buttonStyle(.plain)
             Button("기록 저장") {
-                onSave(title.isEmpty ? "오늘의 마음" : title)
+                onSave(title.isEmpty ? "오늘의 마음" : title, content)
                 dismiss()
             }
             .buttonStyle(.emberPrimary(size: .compact))
@@ -60,4 +60,4 @@ struct QuickRecordView: View {
     }
 }
 
-#Preview { QuickRecordView(onSave: { _ in }, onOpenDetail: {}) }
+#Preview { QuickRecordView(onSave: { _, _ in }, onOpenDetail: {}) }

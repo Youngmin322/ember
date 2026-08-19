@@ -7,11 +7,12 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome = false
+    @State private var recordStore = RecordStore()
 
     var body: some View {
         Group {
             if hasSeenWelcome {
-                MainTabView()
+                MainTabView(recordStore: recordStore)
             } else {
                 WelcomeView { hasSeenWelcome = true }
             }
@@ -21,13 +22,15 @@ struct ContentView: View {
 }
 
 private struct MainTabView: View {
+    let recordStore: RecordStore
+
     var body: some View {
         TabView {
             Tab("기록", systemImage: "flame.fill") {
-                NavigationStack { HomeView() }
+                NavigationStack { HomeView(recordStore: recordStore) }
             }
             Tab("보관함", systemImage: "archivebox.fill") {
-                NavigationStack { CollectionView() }
+                NavigationStack { CollectionView(recordStore: recordStore) }
             }
             Tab("설정", systemImage: "gearshape") {
                 NavigationStack { SettingsView() }
@@ -86,4 +89,4 @@ private struct SettingsView: View {
 }
 
 #Preview("첫 실행") { WelcomeView(onStart: {}) }
-#Preview("앱") { MainTabView() }
+#Preview("앱") { MainTabView(recordStore: RecordStore()) }

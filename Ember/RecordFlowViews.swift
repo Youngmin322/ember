@@ -37,7 +37,7 @@ struct DetailedRecordView: View {
     @State private var selectedEmotion = "평온"
     @State private var selectedFocus = "업무 집중 모드"
     @State private var isSaved = false
-    let onSave: (String) -> Void
+    let onSave: (String, String) -> Void
 
     var body: some View {
         ScrollView {
@@ -106,7 +106,7 @@ struct DetailedRecordView: View {
         .background(Color.emberBackground)
         .safeAreaInset(edge: .bottom) {
             Button("기록 저장") {
-                onSave(title.isEmpty ? "오늘의 마음" : title)
+                onSave(title.isEmpty ? "오늘의 마음" : title, content)
                 isSaved = true
             }
             .buttonStyle(.emberPrimary)
@@ -207,7 +207,7 @@ struct FocusModePicker: View {
 }
 
 struct CollectionView: View {
-    private let shelves = [("2026년 8월", 4), ("2026년 7월", 4), ("2026년 6월", 3)]
+    let recordStore: RecordStore
 
     var body: some View {
         ScrollView {
@@ -218,14 +218,26 @@ struct CollectionView: View {
                 Text("내가 남긴 마음들이 차곡차곡 쌓이고 있어요.")
                     .font(.emberBody)
                     .foregroundStyle(Color.emberTextSecondary)
-                ForEach(shelves, id: \.0) { shelf in
+                if recordStore.records.isEmpty {
+                    ContentUnavailableView(
+                        "아직 담긴 불꽃이 없어요",
+                        systemImage: "flame",
+                        description: Text("오늘의 마음을 기록하면 이곳에 하나씩 쌓여요.")
+                    )
+                    .frame(maxWidth: .infinity, minHeight: 360)
+                }
+                ForEach(monthlyShelves, id: \.title) { shelf in
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(shelf.0).font(.emberSectionTitle)
-                        HStack(alignment: .bottom, spacing: 12) {
-                            ForEach(0..<shelf.1, id: \.self) { _ in
-                                EmberJar(size: .shelf).frame(maxWidth: .infinity)
+                        Text(shelf.title).font(.emberSectionTitle)
+                        LazyVGrid(
+                            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4),
+                            alignment: .leading,
+                            spacing: 14
+                        ) {
+                            ForEach(shelf.records) { _ in
+                                EmberJar(size: .shelf)
+                                    .frame(maxWidth: .infinity)
                             }
-                            Spacer(minLength: shelf.1 == 3 ? 62 : 0)
                         }
                         Rectangle().fill(Color.emberDivider).frame(height: 1)
                     }
@@ -237,6 +249,16 @@ struct CollectionView: View {
         .scrollIndicators(.hidden)
         .background(Color.emberBackground)
         .navigationBarHidden(true)
+    }
+
+    private var monthlyShelves: [(title: String, records: [EmberRecord])] {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy년 M월"
+        let grouped = Dictionary(grouping: recordStore.records) { formatter.string(from: $0.createdAt) }
+        return grouped
+            .map { (title: $0.key, records: $0.value.sorted { $0.createdAt > $1.createdAt }) }
+            .sorted { $0.records.first!.createdAt > $1.records.first!.createdAt }
     }
 }
 
@@ -283,4 +305,4 @@ struct FocusConnectionsView: View {
     }
 }
 
-#Preview { NavigationStack { DetailedRecordView(onSave: { _ in }) } }
+#Preview { NavigationStack { DetailedRecordView(onSave: { _, _ in }) } }

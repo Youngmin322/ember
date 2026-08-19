@@ -1,0 +1,73 @@
+{
+  "fill" : {
+    "linear-gradient" : [
+      "display-p3:0.96680,0.95752,0.92139,1.00000",
+      "display-p3:0.87190,0.86188,0.82286,1.00000"
+    ],
+    "orientation" : {
+      "start" : {
+        "x" : 0.5,
+        "y" : 1
+      },
+      "stop" : {
+        "x" : 0.5,
+        "y" : 0.3
+      }
+    }
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "glass" : false,
+          "image-name" : "EmberFlame.png",
+          "name" : "EmberFlame",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -1,
+              43.5859375
+            ]
+          }
+        },
+        {
+          "image-name" : "EmberJar.png",
+          "name" : "EmberJar",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              1,
+              43.5859375
+            ]
+          }
+        },
+        {
+          "hidden" : false,
+          "image-name" : "EmberCorkscrew.png",
+          "name" : "EmberCorkscrew",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -1.5,
+              -312.5859375
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
