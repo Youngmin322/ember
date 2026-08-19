@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-// Figma specifies Noto Sans KR. The project keeps its bundled Pretendard family
-// here so changing the product typeface later remains a single-file operation.
+/// Figma specifies Noto Sans KR. The project keeps its bundled Pretendard family
+/// here so changing the product typeface later remains a single-file operation.
 extension Font {
     /// Figma: Ember/Brand
     static let emberBrand = Font.custom(
