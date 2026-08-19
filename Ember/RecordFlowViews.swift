@@ -7,7 +7,7 @@ import SwiftUI
 
 enum EmberJarSize {
     case welcome, hero, small, shelf
-
+    
     var dimensions: CGSize {
         switch self {
         case .welcome: CGSize(width: 93, height: 124)
@@ -20,7 +20,7 @@ enum EmberJarSize {
 
 struct EmberJar: View {
     let size: EmberJarSize
-
+    
     var body: some View {
         Image("Ember")
             .resizable()
@@ -38,7 +38,7 @@ struct DetailedRecordView: View {
     @State private var selectedFocus = "업무 집중 모드"
     @State private var isSaved = false
     let onSave: (String, String) -> Void
-
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -52,7 +52,7 @@ struct DetailedRecordView: View {
                     .padding(.horizontal, 16)
                     .frame(height: 52)
                     .background(Color.emberSurfaceSubtle, in: RoundedRectangle(cornerRadius: EmberRadius.medium, style: .continuous))
-
+                
                 fieldLabel("기록")
                 ZStack(alignment: .bottomTrailing) {
                     TextField("오늘 있었던 일과 생각을 천천히 적어보세요", text: $content, axis: .vertical)
@@ -67,13 +67,13 @@ struct DetailedRecordView: View {
                         .padding(16)
                 }
                 .background(Color.emberSurfaceSubtle, in: RoundedRectangle(cornerRadius: EmberRadius.medium, style: .continuous))
-
+                
                 fieldLabel("기록에 더하기")
                 HStack(spacing: 10) {
                     recordChip(icon: "face.smiling", title: selectedEmotion)
                     recordChip(icon: "photo", title: "사진")
                 }
-
+                
                 NavigationLink {
                     FocusModePicker(selectedFocus: $selectedFocus)
                 } label: {
@@ -91,7 +91,7 @@ struct DetailedRecordView: View {
                     .background(Color.emberSurfaceFocus, in: RoundedRectangle(cornerRadius: EmberRadius.large, style: .continuous))
                 }
                 .buttonStyle(.plain)
-
+                
                 Label("FocusMode가 시작되면 이 기록을 알림으로 다시 만나요.", systemImage: "bell")
                     .font(.emberMetadata)
                     .foregroundStyle(Color.emberTextSecondary)
@@ -125,11 +125,11 @@ struct DetailedRecordView: View {
             .presentationCornerRadius(28)
         }
     }
-
+    
     private func fieldLabel(_ title: String) -> some View {
         Text(title).font(.emberFieldLabel).foregroundStyle(Color.emberTextPrimary)
     }
-
+    
     private func recordChip(icon: String, title: String) -> some View {
         Button {} label: {
             Label(title, systemImage: icon)
@@ -145,7 +145,7 @@ struct DetailedRecordView: View {
 
 private struct SavedRecordSheet: View {
     let onHome: () -> Void
-
+    
     var body: some View {
         VStack(spacing: 10) {
             Text("오늘의 불꽃을 담았어요")
@@ -171,7 +171,7 @@ struct FocusModePicker: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedFocus: String
     private let modes = ["업무 집중 모드", "운동", "독서"]
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("FocusMode 연결")
@@ -208,16 +208,15 @@ struct FocusModePicker: View {
 
 struct CollectionView: View {
     let recordStore: RecordStore
-
+    
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 28) {
-                Text("불꽃 보관함")
-                    .font(.emberScreenTitle)
-                    .padding(.top, 18)
-                Text("내가 남긴 마음들이 차곡차곡 쌓이고 있어요.")
-                    .font(.emberBody)
-                    .foregroundStyle(Color.emberTextSecondary)
+        VStack(alignment: .leading, spacing: 28) {
+            Text("불꽃 보관함")
+                .font(.emberScreenTitle)
+                .padding(.top, 18)
+            
+            ScrollView {
+                
                 if recordStore.records.isEmpty {
                     ContentUnavailableView(
                         "아직 담긴 불꽃이 없어요",
@@ -243,14 +242,15 @@ struct CollectionView: View {
                     }
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 30)
+            
         }
+        .padding(.horizontal, 24)
+        .padding(.bottom, 30)
         .scrollIndicators(.hidden)
         .background(Color.emberBackground)
         .navigationBarHidden(true)
     }
-
+    
     private var monthlyShelves: [(title: String, records: [EmberRecord])] {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -269,7 +269,7 @@ struct FocusConnectionsView: View {
         ("마음가짐", "조급해하지 말고 한 가지에 집중하기."),
         ("동기", "내가 만든 작은 변화도 충분히 의미 있다.")
     ]
-
+    
     var body: some View {
         List {
             Section {
@@ -306,3 +306,7 @@ struct FocusConnectionsView: View {
 }
 
 #Preview { NavigationStack { DetailedRecordView(onSave: { _, _ in }) } }
+
+#Preview {
+    CollectionView(recordStore: RecordStore())
+}

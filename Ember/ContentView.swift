@@ -76,17 +76,36 @@ private struct WelcomeView: View {
 
 private struct SettingsView: View {
     var body: some View {
-        List {
-            Section("FocusMode") {
-                NavigationLink("FocusMode 연결 관리") { FocusConnectionsView() }
+        VStack(alignment: .leading, spacing: 0) {
+            // 고정 헤더
+            Text("설정")
+                .font(.emberScreenTitle)
+                .padding(.horizontal, EmberLayout.screenHorizontalPadding)
+                .padding(.top, 18)
+                .padding(.bottom, 24)
+
+            // 스크롤되는 영역
+            List {
+                Section("FocusMode") {
+                    NavigationLink("FocusMode 연결 관리") {
+                        FocusConnectionsView()
+                    }
+                }
+
+                Section("앱 정보") {
+                    LabeledContent("기록 저장", value: "이 기기")
+                }
             }
-            Section("앱 정보") { LabeledContent("기록 저장", value: "이 기기") }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(Color.emberBackground)
         }
-        .scrollContentBackground(.hidden)
         .background(Color.emberBackground)
-        .navigationTitle("설정")
+        .navigationBarHidden(true)
     }
 }
-
 #Preview("첫 실행") { WelcomeView(onStart: {}) }
 #Preview("앱") { MainTabView(recordStore: RecordStore()) }
+#Preview("설정") {
+    SettingsView()
+}
