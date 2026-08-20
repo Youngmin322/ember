@@ -11,6 +11,7 @@ struct EmberJarAnimation: View {
     enum Size {
         case hero
         case small
+        case home
 
         var width: CGFloat {
             switch self {
@@ -18,6 +19,8 @@ struct EmberJarAnimation: View {
                 120
             case .small:
                 70
+            case .home:
+                50
             }
         }
 
@@ -27,6 +30,8 @@ struct EmberJarAnimation: View {
                 140
             case .small:
                 82
+            case .home:
+                60
             }
         }
     }
@@ -99,10 +104,6 @@ struct EmberJarAnimation: View {
         Color.emberBackground
             .ignoresSafeArea()
         
-        VStack(spacing: 40) {
             EmberJarAnimation(size: .hero)
-            
-            EmberJarAnimation(size: .small)
-        }
     }
 }

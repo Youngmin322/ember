@@ -64,23 +64,33 @@ struct HomeView: View {
                     Text("오늘 떠오른 마음")
                         .font(.emberControl)
                         .foregroundStyle(Color.emberAccentText)
+
                     Text("지금 가장 마음에 남는 것은 무엇인가요?")
                         .font(.emberBodyEmphasis)
                         .foregroundStyle(Color.emberTextPrimary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+
                 Spacer()
-                EmberJar(size: .hero)
+
+                EmberJarAnimation(size: .home)
             }
-            
-            Button { isQuickRecordPresented = true } label: {
-                Text(hasTodayRecord ? "새 기록 추가하기" : "오늘의 기록 시작하기")
+
+            Button {
+                isQuickRecordPresented = true
+            } label: {
+                Text("기록하기")
             }
             .buttonStyle(.emberPrimary(size: .compact))
             .padding(.top, hasTodayRecord ? 14 : 24)
         }
         .padding(20)
-        .emberCardStyle(fill: .emberSurfaceHighlight, border: .emberBorderSubtle, cornerRadius: EmberRadius.card, hasShadow: true)
+        .emberCardStyle(
+            fill: .emberSurfaceHighlight,
+            border: .emberBorderSubtle,
+            cornerRadius: EmberRadius.card,
+            hasShadow: true
+        )
     }
     
     private var rhythmCard: some View {
